@@ -2,7 +2,7 @@ package net.madhaus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
-class Student {
+public class Student {
     @JsonProperty
     int id;
 
@@ -16,6 +16,13 @@ class Student {
         this.name = name;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
+    }
     // Display student details
     public void displayStudent() {
       System.out.println("ID: " + id + ", Name: " + name);
