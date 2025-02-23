@@ -1,41 +1,70 @@
-import java.util.ArrayList;
+import java.util.*;
 
 public class ProjectUtils {
   public static String findClosestMatch(String input, ArrayList<Student> students) {
+    if (input == null || students == null || students.isEmpty()) {
+      return null;
+    }
+
+    final String searchInput = input.toLowerCase(); // Declare final variable
     String bestMatch = null;
     int minDistance = Integer.MAX_VALUE;
 
+    Map<String, Integer> cache = new HashMap<>();
+
     for (Student student : students) {
-        int distance = levenshteinDistance(input.toLowerCase(), student.name.toLowerCase());
-        if (distance < minDistance) {
-            minDistance = distance;
-            bestMatch = student.name;
+      if (student.name == null)
+        continue;
+
+      String studentName = student.name.toLowerCase();
+      String[] nameParts = studentName.split("\\s+");
+
+      // ✅ Exact match check
+      if (searchInput != null && searchInput.trim().toLowerCase().equals(studentName)) {
+        return student.name;
+      }
+
+      // ✅ Check against the full name
+      int fullNameDistance = cache.computeIfAbsent(studentName, k -> levenshteinDistance(searchInput, k));
+      if (fullNameDistance < minDistance) {
+        minDistance = fullNameDistance;
+        bestMatch = student.name;
+      }
+
+      // ✅ Check against each name part
+      for (String part : nameParts) {
+        int partDistance = cache.computeIfAbsent(part, k -> levenshteinDistance(searchInput, k));
+        if (partDistance < minDistance) {
+          minDistance = partDistance;
+          bestMatch = student.name;
         }
+      }
     }
 
-    return (minDistance <= 2) ? bestMatch : null; // Allow small mistakes
-}
+    int threshold = (searchInput.length() >= 5) ? 3 : 2;
+    return (minDistance <= threshold) ? bestMatch : null;
+  }
 
-  // Levenshtein Distance Algorithm (Counts differences between words)
-public static int levenshteinDistance(String a, String b) {
-    int[][] dp = new int[a.length() + 1][b.length() + 1];
+  // 🔹 Optimized Levenshtein Distance (Space-optimized O(n) memory)
+  public static int levenshteinDistance(String a, String b) {
+    int[] prev = new int[b.length() + 1];
+    int[] curr = new int[b.length() + 1];
 
-    for (int i = 0; i <= a.length(); i++) {
-        for (int j = 0; j <= b.length(); j++) {
-            if (i == 0) {
-                dp[i][j] = j;
-            } else if (j == 0) {
-                dp[i][j] = i;
-            } else {
-                dp[i][j] = Math.min(Math.min(
-                        dp[i - 1][j] + 1, 
-                        dp[i][j - 1] + 1),
-                        dp[i - 1][j - 1] + (a.charAt(i - 1) == b.charAt(j - 1) ? 0 : 1)
-                );
-            }
-        }
+    for (int j = 0; j <= b.length(); j++) {
+      prev[j] = j;
     }
 
-    return dp[a.length()][b.length()];
-}
+    for (int i = 1; i <= a.length(); i++) {
+      curr[0] = i;
+      for (int j = 1; j <= b.length(); j++) {
+        int cost = (a.charAt(i - 1) == b.charAt(j - 1)) ? 0 : 1;
+        curr[j] = Math.min(Math.min(curr[j - 1] + 1, prev[j] + 1), prev[j - 1] + cost);
+      }
+      int[] temp = prev;
+      prev = curr;
+      curr = temp;
+    }
+
+    return prev[b.length()];
+  }
 }
