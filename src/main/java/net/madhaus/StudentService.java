@@ -2,6 +2,7 @@ package net.madhaus;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,7 @@ public class StudentService {
   private ArrayList<Student> students = new ArrayList<>();
   private int studentId = 1;
   private final ObjectMapper objectMapper = new ObjectMapper();
+  private final ObjectNode jsonNode = objectMapper.createObjectNode();
   private final Scanner scanner = new Scanner(System.in);
 
   public StudentService() {
@@ -95,10 +97,19 @@ public class StudentService {
       return;
 
     try (Reader reader = new FileReader(FILE_NAME)) {
+      System.out.println("Reading data from file...");
             students = objectMapper.readValue(reader, new TypeReference<ArrayList<Student>>() {});
+      for (Student student : students) {
+        System.out.println("ID: " + student.id + ", Name: " + student.name);
+      }
             if (!students.isEmpty()) {
+              System.out.println("Loaded " + students.size() + " students.");
                 studentId = students.get(students.size() - 1).id + 1;
+            }else{
+              System.out.println("No students found in the file.");
             }
+
+
         
     } catch (IOException e) {
       System.out.println("Error loading data: " + e.getMessage());
