@@ -6,6 +6,7 @@ interface StudentSearchProps {
   onSearchChange: (query: string) => void;
   onSearchTypeChange: (type: "name" | "id") => void;
   onSearchSubmit: (e: React.FormEvent) => void;
+  onReset: () => void; // New prop for the reset functionality
 }
 
 const StudentSearch: React.FC<StudentSearchProps> = ({
@@ -13,7 +14,8 @@ const StudentSearch: React.FC<StudentSearchProps> = ({
   searchType,
   onSearchChange,
   onSearchTypeChange,
-  onSearchSubmit
+  onSearchSubmit,
+  onReset // Receiving the reset function as prop
 }) => {
   return (
     <div className="bg-white shadow-lg rounded-lg p-8 mb-8 max-w-4xl mx-auto">
@@ -65,6 +67,16 @@ const StudentSearch: React.FC<StudentSearchProps> = ({
           >
             Search
           </button>
+          {/* Reset Button */}
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={onReset}
+              className="bg-gray-600 text-white font-semibold px-6 py-3 rounded-lg hover:bg-gray-500 transition"
+            >
+              Reset
+            </button>
+          )}
         </div>
       </form>
     </div>

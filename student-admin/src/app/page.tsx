@@ -148,7 +148,11 @@ export default function StudentManagement() {
       });
     }
   };
-
+  const handleReset = () => {
+    setSearchQuery(""); 
+    setSearchType("name");
+    fetchStudents(); // Fetch all students without any query
+  };
   return (
     <div className="min-h-screen bg-gray-100 text-black">
       <nav className="bg-blue-600 text-white py-4 px-6 shadow-md">
@@ -177,6 +181,7 @@ export default function StudentManagement() {
           onSearchChange={handleSearchChange}
           onSearchTypeChange={handleSearchTypeChange} // To change search type
           onSearchSubmit={handleSearchSubmit}
+          onReset={handleReset}
         />
         <StudentTable
           students={students}
