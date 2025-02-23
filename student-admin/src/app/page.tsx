@@ -4,6 +4,7 @@ import axios from "axios";
 import StudentTable from "@/components/StudentTable";
 import DeleteConfirmationModal from "@/components/DeleteConfirmationModal";
 import StudentEditForm from "@/components/StudentEditForm";
+import StudentSearch from "@/components/Studentsearch";
 
 export interface Student {
   id: number;
@@ -22,7 +23,9 @@ export default function StudentManagement() {
     name: "",
     email: ""
   });
+  const [loading, setLoading] = useState<boolean>(false);
   const [deleteStudentId, setDeleteStudentId] = useState<number | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   useEffect(() => {
     axios
@@ -30,6 +33,21 @@ export default function StudentManagement() {
       .then((res) => setStudents(res.data))
       .catch((err) => console.error("Error fetching students:", err));
   }, []);
+
+  // Fetch students
+  const fetchStudents = async (query: string = "") => {
+    try {
+      setLoading(true);
+      const response = await axios.get<Student[]>(
+        `${API_URL}${query ? `/search?name=${query}` : ""}`
+      );
+      setStudents(response.data);
+    } catch (err) {
+      console.error("Error fetching students:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const toggleForm = () => {
     setFormVisible(!formVisible);
@@ -82,6 +100,15 @@ export default function StudentManagement() {
     setFormVisible(true);
   };
 
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    fetchStudents(searchQuery);
+  };
+
   const confirmDelete = (id: number) => {
     setDeleteStudentId(id);
   };
@@ -110,7 +137,7 @@ export default function StudentManagement() {
           onClick={toggleForm}
           className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded mb-4"
         >
-          {formVisible ? "Hide Form" : "Add Student"}
+          {formVisible ? "Cancel" : "Add Student"}
         </button>
 
         <StudentEditForm
@@ -120,10 +147,17 @@ export default function StudentManagement() {
           handleChange={handleChange}
           handleSubmit={handleSubmit}
         />
+        {/* Search Component */}
+        <StudentSearch
+          searchQuery={searchQuery}
+          onSearchChange={handleSearchChange}
+          onSearchSubmit={handleSearchSubmit}
+        />
         <StudentTable
           students={students}
           onEdit={handleEdit}
           onDelete={confirmDelete}
+          loading={loading}
         />
       </div>
 
