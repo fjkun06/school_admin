@@ -6,7 +6,6 @@ public class StudentManagementSystem {
         Scanner scanner = new Scanner(System.in);
         ArrayList<Student> students = new ArrayList<>();
         int studentId = 1; // Unique ID for each student
-        // Student studx = new Student(55, "Pauline");
 
         while (true) {
             // Display menu options
