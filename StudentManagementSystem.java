@@ -6,10 +6,10 @@ public class StudentManagementSystem {
   public static void main(String[] args) {
     Scanner scanner = new Scanner(System.in);
     ArrayList<Student> students = new ArrayList<>();
-    int studentId = 1; // Unique ID for each student
+    int studentId = 1; // student ID
 
     while (true) {
-      // Display menu options
+      // Available options
       System.out.println("\nStudent Management System");
       System.out.println("1. Add Student");
       System.out.println("2. View Students");
@@ -18,8 +18,26 @@ public class StudentManagementSystem {
       System.out.println("5. Exit");
       System.out.print("Choose an option: ");
 
-      int choice = scanner.nextInt();
-      scanner.nextLine(); // Consume newline
+      int choice = 0;
+      while (true) {
+        System.out.print("What would you like to do (1 - 5)?: ");
+
+        // Check if the user input is a valid integer
+        if (scanner.hasNextInt()) {
+          choice = scanner.nextInt();
+          scanner.nextLine(); // Consume newline, empty buffer
+
+          // Check if the input is within the valid range
+          if (choice >= 1 && choice <= 5) {
+            break; // Valid choice, break the loop
+          } else {
+            System.out.println("Invalid choice. Please select a valid option (1 - 5).");
+          }
+        } else {
+          System.out.println("Invalid input. Please enter an integer between 1 and 5.");
+          scanner.nextLine(); // Clear invalid input
+        }
+      }
 
       switch (choice) {
         case 1: // Add Student
@@ -46,9 +64,6 @@ public class StudentManagementSystem {
           // if user enters an integer: ID
           if (scanner.hasNextInt()) {
             int searchId = scanner.nextInt();
-            // scanner.nextLine();
-            System.out.println("ID has ben used");
-
             boolean found = false;
             for (Student student : students) {
               if (student.id == searchId) {
@@ -65,15 +80,13 @@ public class StudentManagementSystem {
           // if user enters a string: name
           else {
             String studentName = scanner.nextLine();
-            System.out.println("Name has ben used");
-            System.out.println(studentName);
-
+            // Store list of matches based on name
             List<Student> suggestionsList = ProjectUtils.findClosestMatch(studentName, students);
             if (suggestionsList.isEmpty()) {
               System.out.println("No student found.");
             } else {
               System.out.println("Found student(s):");
-              for (Student student : suggestionsList) {
+              for (Student student : suggestionsList) { // loop to display result
                 student.displayStudent();
               }
             }
@@ -106,6 +119,8 @@ public class StudentManagementSystem {
         default:
           System.out.println("Invalid choice. Please select a valid option.");
       }
+
     }
+
   }
 }
