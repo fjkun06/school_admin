@@ -3,6 +3,7 @@ package net.madhaus;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.*;
+import java.util.Optional;
 import java.util.ArrayList;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +30,20 @@ public class StudentService {
     return students;
   }
 
+    public Student updateStudent(int id, Student updatedStudent) {
+    Optional<Student> studentOptional = Optional.ofNullable(searchStudentById(id));
+
+    if (studentOptional.isPresent()) {
+      Student student = studentOptional.get();
+      student.setName(updatedStudent.getName());
+      student.setEmail(updatedStudent.getEmail());
+      saveData();
+
+      return student;
+    } else {
+      throw new RuntimeException("Student not found");
+    }
+  }
 
   public Student searchStudentById(int id) {
     return students.stream().filter(s -> s.getId() == id).findFirst().orElse(null);
