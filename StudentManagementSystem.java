@@ -67,9 +67,12 @@ public class StudentManagementSystem {
             System.out.println("Name has ben used");
             System.out.println(studentName);
 
-            String suggestion = ProjectUtils.findClosestMatch(studentName, students);
+            Student suggestion = ProjectUtils.findClosestMatch(studentName, students);
             if (suggestion != null) {
-              System.out.println("Student not found. Did you mean: " + suggestion + "?");
+              System.out.println("This is what we found: " );
+              // System.out.println("This is what we found: " + suggestion.toString() + "?");
+              suggestion.displayStudent();
+
             } else {
               System.out.println("Student not found.");
             }

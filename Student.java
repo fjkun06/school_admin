@@ -10,6 +10,10 @@ class Student {
 
     // Display student details
     public void displayStudent() {
-        System.out.println("ID: " + id + ", Name: " + name);
+      System.out.println("ID: " + id + ", Name: " + name);
+    }
+    
+    public String toString() {
+      return "ID: " + id + ", Name: " + name;
     }
 }

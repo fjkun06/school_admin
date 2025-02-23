@@ -1,13 +1,13 @@
 import java.util.*;
 
 public class ProjectUtils {
-  public static String findClosestMatch(String input, ArrayList<Student> students) {
+  public static Student findClosestMatch(String input, ArrayList<Student> students) {
     if (input == null || students == null || students.isEmpty()) {
       return null;
     }
 
     final String searchInput = input.toLowerCase(); // Declare final variable
-    String bestMatch = null;
+    Student bestMatch = null;
     int minDistance = Integer.MAX_VALUE;
 
     Map<String, Integer> cache = new HashMap<>();
@@ -21,14 +21,14 @@ public class ProjectUtils {
 
       // ✅ Exact match check
       if (searchInput != null && searchInput.trim().toLowerCase().equals(studentName)) {
-        return student.name;
+        return student;
       }
 
       // ✅ Check against the full name
       int fullNameDistance = cache.computeIfAbsent(studentName, k -> levenshteinDistance(searchInput, k));
       if (fullNameDistance < minDistance) {
         minDistance = fullNameDistance;
-        bestMatch = student.name;
+        bestMatch = student;
       }
 
       // ✅ Check against each name part
@@ -36,7 +36,7 @@ public class ProjectUtils {
         int partDistance = cache.computeIfAbsent(part, k -> levenshteinDistance(searchInput, k));
         if (partDistance < minDistance) {
           minDistance = partDistance;
-          bestMatch = student.name;
+          bestMatch = student;
         }
       }
     }
