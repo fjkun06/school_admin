@@ -4,7 +4,7 @@ import axios from "axios";
 import StudentTable from "@/components/StudentTable";
 import DeleteConfirmationModal from "@/components/DeleteConfirmationModal";
 import StudentEditForm from "@/components/StudentEditForm";
-import StudentSearch from "@/components/Studentsearch";
+import StudentSearch from "@/components/StudentSearch";
 
 export interface Student {
   id: number;
@@ -26,6 +26,7 @@ export default function StudentManagement() {
   const [loading, setLoading] = useState<boolean>(false);
   const [deleteStudentId, setDeleteStudentId] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [searchType, setSearchType] = useState<"name" | "id">("name");
 
   useEffect(() => {
     axios
@@ -35,17 +36,37 @@ export default function StudentManagement() {
   }, []);
 
   // Fetch students
-  const fetchStudents = async (query: string = "") => {
-    try {
-      setLoading(true);
-      const response = await axios.get<Student[]>(
-        `${API_URL}${query ? `/search?name=${query}` : ""}`
-      );
-      setStudents(response.data);
-    } catch (err) {
-      console.error("Error fetching students:", err);
-    } finally {
-      setLoading(false);
+  const fetchStudents = async (
+    query: string = "",
+    type: "name" | "id" = "name"
+  ) => {
+    if (type === "name") {
+      try {
+        setLoading(true);
+        const response = await axios.get<Student[]>(
+          `${API_URL}${query ? `/search?name=${query}` : ""}`
+        );
+        setStudents(response.data);
+      } catch (err) {
+        console.error("Error fetching students:", err);
+      } finally {
+        setLoading(false);
+      }
+    } else {
+      try {
+        //gettiung by id
+        console.log("entered fetchstudents id section");
+
+        setLoading(true);
+        const response = await axios.get<Student[]>(
+          `${API_URL}${query ? `/${parseInt(query)}` : ""}`
+        );
+        setStudents([response.data] as unknown as Student[]);
+      } catch (err) {
+        console.error("Error fetching students:", err);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -103,10 +124,12 @@ export default function StudentManagement() {
   const handleSearchChange = (query: string) => {
     setSearchQuery(query);
   };
-
+  const handleSearchTypeChange = (type: "name" | "id") => {
+    setSearchType(type);
+  };
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    fetchStudents(searchQuery);
+    fetchStudents(searchQuery, searchType);
   };
 
   const confirmDelete = (id: number) => {
@@ -150,7 +173,9 @@ export default function StudentManagement() {
         {/* Search Component */}
         <StudentSearch
           searchQuery={searchQuery}
+          searchType={searchType} // Passing the selected search type
           onSearchChange={handleSearchChange}
+          onSearchTypeChange={handleSearchTypeChange} // To change search type
           onSearchSubmit={handleSearchSubmit}
         />
         <StudentTable
