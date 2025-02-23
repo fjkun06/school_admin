@@ -1,11 +1,17 @@
 package net.madhaus;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonCreator;
 
 class Student {
+    @JsonProperty
     int id;
+
+    @JsonProperty
     String name;
 
     // Constructor to create a new student
-    public Student(int id, String name) {
+    @JsonCreator
+    public Student(@JsonProperty("id") int id, @JsonProperty("name") String name) {
         this.id = id;
         this.name = name;
     }
