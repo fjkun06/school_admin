@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.*;
 import java.util.Optional;
 import java.util.ArrayList;
+import java.util.List;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -47,6 +48,11 @@ public class StudentService {
 
   public Student searchStudentById(int id) {
     return students.stream().filter(s -> s.getId() == id).findFirst().orElse(null);
+  }
+
+  // Search students by name
+  public List<Student> searchStudentsByName(String name) {
+    return ProjectUtils.findClosestMatch(name, students);
   }
 
   public boolean removeStudent(int id) {

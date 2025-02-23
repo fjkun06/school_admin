@@ -41,6 +41,12 @@ public class StudentController {
         return studentService.searchStudentById(id);
     }
 
+    // Search students by name
+    @GetMapping("/search")
+    public List<Student> searchStudentsByName(@RequestParam String name) {
+        return studentService.searchStudentsByName(name);
+    }
+
     // Delete a student
     @DeleteMapping("/{id}")
     public String deleteStudent(@PathVariable int id) {
