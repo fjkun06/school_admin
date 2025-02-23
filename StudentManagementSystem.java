@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class StudentManagementSystem {
@@ -67,14 +68,14 @@ public class StudentManagementSystem {
             System.out.println("Name has ben used");
             System.out.println(studentName);
 
-            Student suggestion = ProjectUtils.findClosestMatch(studentName, students);
-            if (suggestion != null) {
-              System.out.println("This is what we found: " );
-              // System.out.println("This is what we found: " + suggestion.toString() + "?");
-              suggestion.displayStudent();
-
+            List<Student> suggestionsList = ProjectUtils.findClosestMatch(studentName, students);
+            if (suggestionsList.isEmpty()) {
+              System.out.println("No student found.");
             } else {
-              System.out.println("Student not found.");
+              System.out.println("Found student(s):");
+              for (Student student : suggestionsList) {
+                student.displayStudent();
+              }
             }
           }
 
